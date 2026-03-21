@@ -36,7 +36,7 @@ Class Tabs
 Raid Window
 ![Raid Window](screenshots/Raid%20Window.png)
 Character Sheet
-![Character Sheet](screenshots/Character%20Shet.png)
+![Character Sheet](screenshots/Character%20Sheet.png)
 
 #### 
 
