@@ -129,17 +129,13 @@ A master view showing **all tracked characters** across all classes in a 3-colum
 ## 
 
 ## Installation
-
-1. Download `LichborneTracker.zip`
-2. Extract the `LichborneTracker` folder
-3. Place it in your WoW addons directory:
-
+1. Download the zip and extract it
+2. Open the extracted `LichBorne-main` folder
+3. Drag the **`LichborneTracker`** folder into:
 ```
-   World of Warcraft/Interface/AddOns/LichborneTracker/
-   ```
-
-4. Launch WoW (3.3.5a client) 
-5. Type `/lichborne` or click the minimap icon to open the tracker
+   World of Warcraft/Interface/AddOns/
+```
+4. Launch WoW and type `/lichborne` or click the minimap icon
 
 
 
