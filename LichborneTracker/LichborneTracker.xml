@@ -10,7 +10,6 @@
       <Anchor point="CENTER" relativeTo="UIParent" relativePoint="CENTER" x="0" y="0"/>
     </Anchors>
     <Scripts>
-      <OnLoad function="LichborneTracker_OnLoad"/>
       <OnMouseDown>if button=="LeftButton" then this:StartMoving() end</OnMouseDown>
       <OnMouseUp>this:StopMovingOrSizing()</OnMouseUp>
     </Scripts>

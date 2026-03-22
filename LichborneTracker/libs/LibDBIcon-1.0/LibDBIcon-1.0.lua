@@ -126,4 +126,8 @@ function lib:Refresh(name, db)
 	local button = self.objects[name]
 	if not button then return end
 	if db then button.db = db end
+	local angle = (button.db and button.db.minimapPos) or button.minimapPos or 220
+	local x = math.cos(math.rad(angle)) * lib.radius
+	local y = math.sin(math.rad(angle)) * lib.radius
+	button:SetPoint("CENTER", Minimap, "CENTER", x, y)
 end
