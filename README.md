@@ -13,16 +13,16 @@
 
 ---
 
-## What's New in v1.60
+## Recent Changes
 
-- **Needs System** — Mark up to 2 gear slots per character as needed. Visible and editable across Class, All, and Raid tabs. Data persists in SavedVariables
-- **Needs picker popup** — Click any Needs cell to open a slot icon grid. Left-click to mark, right-click to remove. Slots dim when at the 2-slot limit
-- **Needs column in Class tabs** — Displayed beside GS column, shared with All and Raid tabs
-- **All tab delete fixed** — Delete button now correctly removes characters from both the All tab and the class tab database
-- **Raid tab invite fixed** — Invite button now correctly uses `.playerbots bot add` instead of the native WoW invite
-- **Clear All Data** now also clears all Needs data
-- Tier Key and class tabs centered in the frame
-- Title bar and danger buttons no longer overlap
+- **Separate `iLvl` and `GS` columns** — The old GS field is now labeled `iLvl`, and a new `GS` column tracks actual GearScore.
+- **Actual GearScore calculation** — Inspect now calculates WotLK-style GearScore from equipped gear instead of reusing average item level.
+- **Shared score syncing** — `iLvl` and `GS` stay in sync across Class, All, and Raid tabs, including copy/paste and drag reorder paths.
+- **All tab action fixes** — Delete, add-to-group, and add-to-raid actions now operate on the visible character.
+- **Deletion cleanup** — Removing a character also clears matching needs and raid roster references.
+- **Invite flow fixes** — Invite buttons now reflect whether you are inviting a raid, inviting a group, or have an active invite run.
+- **Raid size normalization** — Raid rosters now initialize and clamp correctly for the selected size.
+- **Needs system** — Up to 2 needed gear slots per character, editable across Class, All, and Raid tabs.
 
 ---
 
@@ -35,7 +35,8 @@ Each of the 10 playable classes has its own tab with up to 54 roster slots acros
 - Row number — muted grey, turns gold on hover
 - Spec icon — auto-detected from talent inspection
 - Name — editable, colored by class
-- Gear Score — calculated from item levels via inspect
+- iLvl — average equipped item level calculated via inspect
+- Gear Score — actual WotLK-style GearScore calculated from inspected gear
 - **Needs** — up to 2 gear slots marked as needed, shown as slot icons
 - 17 gear slots — Head, Neck, Shoulders, Back, Chest, Wrists, Hands, Waist, Legs, Feet, Ring 1, Ring 2, Trinket 1, Trinket 2, Main Hand, Off Hand, Ranged
 - Add to Raid (+) and Invite to Group (>) buttons per row
@@ -43,13 +44,13 @@ Each of the 10 playable classes has its own tab with up to 54 roster slots acros
 
 ### Sort & Page
 
-Every tab has a Sort dropdown (top-left) and Page dropdown (top-right). Sort options: By Name, By Class/Spec, By Gear Score. After dragging to reorder, sort mode clears so your order sticks.
+Every tab has a Sort dropdown (top-left) and Page dropdown (top-right). Sort options: By Name, By Class/Spec, By Gear Score. Gear Score sorting uses the true `GS` column. After dragging to reorder, sort mode clears so your order sticks.
 
 ### Bottom Controls (Class Tabs)
 
 - **+ Add Target** — Inspects your current target and adds them
 - **+ Add Group** — Bulk-adds all group/raid members
-- **+ Add Target/Group GS** — Refreshes gear score (does not affect spec)
+- **+ Add Target/Group GS** — Refreshes both `iLvl` and `GS` from inspect (does not affect spec)
 - **+ Add Target/Group Spec** — Reads talent spec (does not affect GS)
 - **Stop** — Cancels a running GS or Spec scan
 - **Maintenance** — Sends maintenance to group chat
@@ -60,7 +61,7 @@ Every tab has a Sort dropdown (top-left) and Page dropdown (top-right). Sort opt
 
 ### Summary Bars
 
-- **Avg bar** — average gear score per class, class name in class color, value in gold
+- **Avg bar** — average tracked item level per class, class name in class color, value in gold
 - **Count bar** — total characters per class
 
 ---
@@ -82,11 +83,11 @@ Per-character gear slot wishlist, accessible from all tabs.
 
 ## Raid Tab
 
-Up to 40 slots across two columns. Each slot shows class icon, spec icon, name, GS, needs, role, notes, and delete button.
+Up to 40 slots across two columns. Each slot shows class icon, spec icon, name, `iLvl`, `GS`, needs, role, notes, and delete button.
 
 ### Raid Controls
 
-- **Sort** — By Name, Class/Spec, or Gear Score
+- **Sort** — By Name, Class/Spec, or Gear Score using the real `GS` value
 - **Tier / Raid / Group dropdowns** — Tier color matches raid name color
 - **Copy** — Copies current roster to session clipboard
 - **Paste** — Prompts confirmation, pastes into destination, disappears after one use
@@ -112,7 +113,7 @@ Automatically logs out old bots, leaves party, converts to raid, and invites all
 Master view of all tracked characters across all classes — 3 columns of 20 rows (60 per page, 180 total).
 
 - Groups A, B, C for organizing characters
-- Sort by Name, Class/Spec, or Gear Score
+- Sort by Name, Class/Spec, or Gear Score using the real `GS` value
 - Needs column editable per row
 - Add to Raid and Invite to Group buttons per row
 - Delete characters directly
@@ -130,9 +131,11 @@ Color-coded T1–T17 reference bar at the top of the frame. Hover any swatch to 
 
 1. Download the zip and extract it
 2. Drag the `LichborneTracker` folder into:
-   ```
+
+   ```text
    World of Warcraft/Interface/AddOns/
    ```
+
 3. Launch WoW and type `/lichborne` or click the minimap icon
 
 **Requirements:** WoW 3.3.5a (WotLK) | AzerothCore | Playerbot module
@@ -149,7 +152,7 @@ Color-coded T1–T17 reference bar at the top of the frame. Hover any swatch to 
 
 ### Tracking Gear
 
-- **+ Add Target/Group GS** — updates gear score without touching spec
+- **+ Add Target/Group GS** — updates both `iLvl` and `GS` without touching spec
 - Hover any gear slot to see the full item tooltip
 
 ### Building a Raid Roster
@@ -181,8 +184,8 @@ Color-coded T1–T17 reference bar at the top of the frame. Hover any swatch to 
 Stored under `LichborneTrackerDB` and `LichborneMinimapIconDB` per WoW account.
 
 | Key | Contents |
-|---|---|
-| `rows` | All tracked characters and gear data |
+| --- | --- |
+| `rows` | All tracked characters, item levels, and GearScore data |
 | `allGroups` | All tab group assignments (A/B/C) |
 | `raidRosters` | Raid rosters keyed by raid name + group |
 | `needs` | Gear needs per character |
@@ -193,7 +196,8 @@ Stored under `LichborneTrackerDB` and `LichborneMinimapIconDB` per WoW account.
 **Clear All Data** permanently deletes all tracked characters, gear, rosters, and needs data.
 
 To share data between accounts, copy:
-```
+
+```text
 WoW/WTF/Account/ACCOUNTNAME/SavedVariables/LichborneTracker.lua
 ```
 
@@ -202,6 +206,7 @@ WoW/WTF/Account/ACCOUNTNAME/SavedVariables/LichborneTracker.lua
 ## Known Limitations
 
 - Inspect requires target within ~28 yards
+- GearScore depends on the inspect data returned by the server for the target's equipped items
 - `NotifyInspect()` is rate-limited — bulk scans space out automatically
 - Playerbot commands sent via SAY chat — requires bot ownership
 - Roster clipboard is session-only (lost on `/reload`)
@@ -211,7 +216,7 @@ WoW/WTF/Account/ACCOUNTNAME/SavedVariables/LichborneTracker.lua
 ## Slash Commands
 
 | Command | Action |
-|---|---|
+| --- | --- |
 | `/lichborne` | Toggle the tracker window |
 | `/lbt` | Toggle the tracker window (short alias) |
 
@@ -221,6 +226,8 @@ WoW/WTF/Account/ACCOUNTNAME/SavedVariables/LichborneTracker.lua
 
 Built for the Lichborne AzerothCore private server. Special thanks to Dohtt for feature suggestions.
 
-**Questions & Support:** lichborne.wow@proton.me
+**Questions & Support:** [lichborne.wow@proton.me](mailto:lichborne.wow@proton.me)
 
-*Compatible with WoW 3.3.5a (build 12340) | AzerothCore | Playerbot Module*
+## Compatibility
+
+WoW 3.3.5a (build 12340) | AzerothCore | Playerbot Module
