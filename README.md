@@ -1,7 +1,7 @@
 # LICHBORNE — Gear Tracker
 **A World of Warcraft WotLK 3.3.5a Addon for AzerothCore Private Servers**
 
-**Version 1.60**
+**Version 1.70**
 
 ---
 
@@ -15,6 +15,10 @@
 
 ## Recent Changes
 
+- **Gear Score average bar in Class tabs** — Each class tab now displays an average GearScore bar alongside the existing average iLvl bar.
+- **Item quality colors on gear slots** — Gear slot icons in the class tab are now color-coded to match WoW item quality (grey, white, green, blue, purple, orange).
+- **Buttons disabled during scans** — Get Gear Score, Get Group Spec, and Invite Raid buttons are now disabled while a scan or invite sequence is running to prevent conflicts.
+- **Visual updates and fixes** — General polish and layout corrections across tabs.
 - **Separate `iLvl` and `GS` columns** — The old GS field is now labeled `iLvl`, and a new `GS` column tracks actual GearScore.
 - **Actual GearScore calculation** — Inspect now calculates WotLK-style GearScore from equipped gear instead of reusing average item level.
 - **Shared score syncing** — `iLvl` and `GS` stay in sync across Class, All, and Raid tabs, including copy/paste and drag reorder paths.
@@ -37,7 +41,7 @@ Each of the 10 playable classes has its own tab with up to 54 roster slots acros
 - Spec icon — auto-detected from talent inspection
 - Name — editable, colored by class
 - iLvl — average equipped item level calculated via inspect
-- Gear Score — actual WotLK-style GearScore calculated from inspected gear
+- Gear Score — actual WotLK-style GearScore calculated from inspected gear, colored by item quality
 - **Needs** — up to 2 gear slots marked as needed, shown as slot icons
 - 17 gear slots — Head, Neck, Shoulders, Back, Chest, Wrists, Hands, Waist, Legs, Feet, Ring 1, Ring 2, Trinket 1, Trinket 2, Main Hand, Off Hand, Ranged
 - Add to Raid (+) and Invite to Group (>) buttons per row
@@ -51,18 +55,19 @@ Every tab has a Sort dropdown (top-left) and Page dropdown (top-right). Sort opt
 
 - **+ Add Target** — Inspects your current target and adds them
 - **+ Add Group** — Bulk-adds all group/raid members
-- **+ Add Target/Group GS** — Refreshes both `iLvl` and `GS` from inspect (does not affect spec)
-- **+ Add Target/Group Spec** — Reads talent spec (does not affect GS)
+- **+ Add Target/Group GS** — Refreshes both `iLvl` and `GS` from inspect (does not affect spec); button disabled during active scan
+- **+ Add Target/Group Spec** — Reads talent spec (does not affect GS); button disabled during active scan
 - **Stop** — Cancels a running GS or Spec scan
 - **Maintenance** — Sends maintenance to group chat
 - **AutoGear** — Sends autogear to group chat
 - **Login/Logout All Bots** — `.playerbots bot add/remove *`
 - **Disband Group / Raid** — Kicks all members then leaves. Requires confirmation
-- **Invite Raid / Stop Invite** — Visible on all tabs
+- **Invite Raid / Stop Invite** — Visible on all tabs; disabled while invite sequence is running
 
 ### Summary Bars
 
 - **Avg bar** — average tracked item level per class, class name in class color, value in gold
+- **GS bar** — average GearScore per class
 - **Count bar** — total characters per class
 
 ---
@@ -105,7 +110,7 @@ Clipboard is session-only. Paste respects destination raid size — a 10-man pas
 
 ### Invite Raid
 
-Automatically logs out old bots, leaves party, converts to raid, and invites all roster members via `.playerbots bot add`.
+Automatically logs out old bots, leaves party, converts to raid, and invites all roster members via `.playerbots bot add`. The Invite Raid button is disabled while the sequence is running.
 
 ---
 
@@ -155,6 +160,7 @@ Color-coded T1–T17 reference bar at the top of the frame. Hover any swatch to 
 
 - **+ Add Target/Group GS** — updates both `iLvl` and `GS` without touching spec
 - Hover any gear slot to see the full item tooltip
+- Gear slot colors reflect WoW item quality
 
 ### Building a Raid Roster
 
@@ -206,7 +212,7 @@ WoW/WTF/Account/ACCOUNTNAME/SavedVariables/LichborneTracker.lua
 
 ## Code Organization
 
-The addon still loads through `LichborneTracker.toc`, but the shared logic is no longer concentrated in one large file.
+The addon loads through `LichborneTracker.toc`. Shared logic is split across dedicated modules.
 
 | File | Responsibility |
 | --- | --- |
@@ -243,9 +249,13 @@ The addon still loads through `LichborneTracker.toc`, but the shared logic is no
 
 ## Credits
 
-Built for the Lichborne AzerothCore private server. Special thanks to Dohtt for feature suggestions.
+Built for the Lichborne AzerothCore private server.
+
+Special thanks to: **Dohtt**, **Scarecr0w12** — TheCGN.net, **Dreathean**, **Revision**, and **crow** for feature suggestions and support.
 
 **Questions & Support:** [lichborne.wow@proton.me](mailto:lichborne.wow@proton.me)
+
+---
 
 ## Compatibility
 
