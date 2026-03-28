@@ -1,6 +1,6 @@
 # LICHBORNE — Gear Tracker
 
-**A World of Warcraft WotLK 3.3.5a Addon for AzerothCore Private Servers that tracks gear score, iLvL, gear slots, specs, and raid rosters for your entire playerbot roster.**
+**A World of Warcraft WotLK 3.3.5a Addon for AzerothCore Private Servers that tracks gear score, iLvL, gear slots, specs, and raid composition for your entire playerbot roster.**
 
 **Version 1.74**
 
