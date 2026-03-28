@@ -4693,7 +4693,7 @@ local function OnFirstShow()
     infoText:SetText(
         "|cffd4af37LICHBORNE|r\n" ..
         "|cffd4af37Gear Tracker & Raid Planner|r\n" ..
-        "|cffd4af37v1.73|r\n" ..
+        "|cffd4af37v1.74|r\n" ..
         "\n" ..
         "|cffaaaaaaQuestions & Support:|r\n" ..
         "|cffd4af37lichborne.wow|r\n" ..
@@ -4784,7 +4784,7 @@ local function BuildFrameBG()
     title:SetPoint("TOPLEFT", f, "TOPLEFT", 10, -12)
     title:SetPoint("TOPRIGHT", f, "TOPRIGHT", -280, -12)
     title:SetJustifyH("LEFT")
-    title:SetText("|cffC69B3ALICHBORNE|r  —  Gear Tracker  |cffaaaaaa v1.73|r")
+    title:SetText("|cffC69B3ALICHBORNE|r  —  Gear Tracker  |cffaaaaaa v1.74|r")
     local closeBtn = CreateFrame("Button", "LichborneCloseBtn", f, "UIPanelCloseButton")
     closeBtn:SetPoint("TOPRIGHT", f, "TOPRIGHT", 2, 2)
     closeBtn:SetScript("OnClick", function() f:Hide() end)
@@ -4969,6 +4969,93 @@ do
             if LichborneMinimapIcon and miniLDB then
                 LichborneMinimapIcon:Register("LichborneTracker", miniLDB, LichborneMinimapIconDB)
                 LichborneMinimapIcon:Refresh("LichborneTracker", LichborneMinimapIconDB)
+            else
+                -- Fallback: native minimap button, copied from DBM LibDBIcon
+                local mb = CreateFrame("Button", "LichborneMinimapBtn", Minimap)
+                mb:SetFrameStrata("MEDIUM")
+                mb:SetWidth(31); mb:SetHeight(31)
+                mb:SetFrameLevel(8)
+                mb:RegisterForClicks("anyUp")
+                mb:RegisterForDrag("LeftButton")
+                mb:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
+                local overlay = mb:CreateTexture(nil, "OVERLAY")
+                overlay:SetWidth(53); overlay:SetHeight(53)
+                overlay:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
+                overlay:SetPoint("TOPLEFT")
+                local background = mb:CreateTexture(nil, "BACKGROUND")
+                background:SetSize(20, 20)
+                background:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
+                background:SetPoint("TOPLEFT", 7, -5)
+                local icon = mb:CreateTexture(nil, "ARTWORK")
+                icon:SetWidth(20); icon:SetHeight(20)
+                icon:SetTexture("Interface\\Icons\\INV_Misc_Book_11")
+                icon:SetTexCoord(0.05, 0.95, 0.05, 0.95)
+                icon:SetPoint("TOPLEFT", 7, -5)
+
+                local function updatePos()
+                    local db = LichborneMinimapIconDB
+                    local angle = math.rad(db and db.minimapPos or 225)
+                    local x, y, q = math.cos(angle), math.sin(angle), 1
+                    if x < 0 then q = q + 1 end
+                    if y > 0 then q = q + 2 end
+                    local minimapShape = GetMinimapShape and GetMinimapShape() or "ROUND"
+                    local shapes = {
+                        ["ROUND"]={true,true,true,true},["SQUARE"]={false,false,false,false},
+                        ["CORNER-TOPLEFT"]={true,false,false,false},["CORNER-TOPRIGHT"]={false,false,true,false},
+                        ["CORNER-BOTTOMLEFT"]={false,true,false,false},["CORNER-BOTTOMRIGHT"]={false,false,false,true},
+                        ["SIDE-LEFT"]={true,true,false,false},["SIDE-RIGHT"]={false,false,true,true},
+                        ["SIDE-TOP"]={true,false,true,false},["SIDE-BOTTOM"]={false,true,false,true},
+                        ["TRICORNER-TOPLEFT"]={true,true,true,false},["TRICORNER-TOPRIGHT"]={true,false,true,true},
+                        ["TRICORNER-BOTTOMLEFT"]={true,true,false,true},["TRICORNER-BOTTOMRIGHT"]={false,true,true,true},
+                    }
+                    local quadTable = shapes[minimapShape]
+                    if quadTable[q] then
+                        x, y = x*80, y*80
+                    else
+                        local diagRadius = 103.13708498985
+                        x = math.max(-80, math.min(x*diagRadius, 80))
+                        y = math.max(-80, math.min(y*diagRadius, 80))
+                    end
+                    mb:SetPoint("CENTER", Minimap, "CENTER", x, y)
+                end
+
+                mb:SetScript("OnClick", function()
+                    if LichborneTrackerFrame and LichborneTrackerFrame:IsShown() then
+                        LichborneTrackerFrame:Hide()
+                    else
+                        LichborneTracker_Open()
+                    end
+                end)
+                mb:SetScript("OnEnter", function()
+                    GameTooltip:SetOwner(mb, "ANCHOR_LEFT")
+                    GameTooltip:AddLine("|cffC69B3ALichborne Gear Tracker|r")
+                    GameTooltip:AddLine("Click to open / close", 1, 1, 1)
+                    GameTooltip:Show()
+                end)
+                mb:SetScript("OnLeave", function() GameTooltip:Hide() end)
+                mb:SetScript("OnMouseDown", function() icon:SetTexCoord(0, 1, 0, 1) end)
+                mb:SetScript("OnMouseUp", function() icon:SetTexCoord(0.05, 0.95, 0.05, 0.95) end)
+                mb:SetScript("OnDragStart", function()
+                    mb:LockHighlight()
+                    icon:SetTexCoord(0, 1, 0, 1)
+                    mb:SetScript("OnUpdate", function()
+                        local mx, my = Minimap:GetCenter()
+                        local px, py = GetCursorPosition()
+                        local scale = Minimap:GetEffectiveScale()
+                        px, py = px / scale, py / scale
+                        if LichborneMinimapIconDB then
+                            LichborneMinimapIconDB.minimapPos = math.deg(math.atan2(py - my, px - mx)) % 360
+                        end
+                        updatePos()
+                    end)
+                end)
+                mb:SetScript("OnDragStop", function()
+                    mb:SetScript("OnUpdate", nil)
+                    icon:SetTexCoord(0.05, 0.95, 0.05, 0.95)
+                    mb:UnlockHighlight()
+                end)
+                updatePos()
+                mb:Show()
             end
             -- Repair all raid rosters: fill any nil/missing slots
             if LichborneTrackerDB and LichborneTrackerDB.raidRosters then
