@@ -147,7 +147,8 @@ Color-coded tier reference bar at the top of the frame, aligned with the Individ
 
 Navigate to your AddOns folder and run:
 
-    git clone https://github.com/Lichborne-AC/LichBorne-Gear-Tracker.git LichborneTracker
+git clone https://github.com/Lichborne-AC/LichborneTracker
+
 
 To update later just run `git pull` inside the LichborneTracker folder.
 
