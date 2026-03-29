@@ -1,34 +1,54 @@
 # Changelog
 
-All notable changes to Lichborne are documented in this file.
+All notable changes to LichborneTracker are documented in this file.
+
+---
+
+## v1.76 - 2026-03-29
 
 ### Fixed
 
-- Fixed minimap icon not appearing on machines where bundled libs failed to load silently
-- Added native fallback minimap button (copied from DBM) that activates automatically when LibDBIcon is unavailable
-- Replaced bundled libs with DBM-compatible versions for wider client support
-- Moved lib registration into ADDON_LOADED for correct load order
-- Changed minimap icon to book texture (INV_Misc_Book_11)
+- Converted `activeTab`, four UI state variables (`LichborneAllCountLabels`, `LichborneRosterIlvlLabel`, `LichborneRosterGsLabel`, `LichborneRaidCountLabels`), and three functions (`RefreshRaidRows`, `RefreshAllRows`, `UpdateSummary`) from accidental globals to proper `local` declarations, eliminating addon conflict risk.
+- Converted `RH2` helper inside `BuildRaidFrame` to `local` — it was a bare global with a short generic name.
+- Fixed Tier 0 dropdown color rendering — `TIER_COLORS[0]` was `nil`; now correctly maps T0 to key `18` (silver-blue).
+- Fixed GS scan timer never resetting — `inspectWait` was declared after the functions that reference it, causing the reset writes to target a different variable. Moved to module top so all closures share the same variable.
+- Replaced three identical inline `classMap` tables with a single module-level `CLASS_TOKEN_MAP` constant.
+
+---
+
+## v1.75 - 2026-03-28
 
 ### Fixed
 
-## v1.73
-- Fixed minimap icon not appearing on fresh installs without other broker addons
-- Replaced bundled libs with compatible versions for wider client compatibility
-- Moved lib registration into ADDON_LOADED for reliability
-- Changed minimap icon to book texture (INV_Misc_Book_11)
+- Fixed minimap icon not appearing on machines where bundled libs failed to load silently.
+- Added native fallback minimap button (based on DBM implementation) that activates automatically when LibDBIcon is unavailable.
+- Replaced bundled libs with DBM-compatible versions for wider client support.
+- Moved lib registration into `ADDON_LOADED` for correct initialization order.
+- Changed minimap icon to book texture (`INV_Misc_Book_11`).
 
+---
 
-## 1.72 - 2026-03-26
+## v1.74 - 2026-03-27
 
 ### Fixed
 
-* Fixed nil value crash (`attempt to index local 'c'`) when opening the raid selector dropdown with an unmapped tier value — now falls back to T1 color safely.
-* Fixed dropdown menus (tier, raid, group, page, spec, sort) orphaning on screen when the addon is closed via ESC key — all menus now close via an OnHide hook on the main frame.
+- Fixed minimap icon not appearing on fresh installs without other broker addons.
+- Replaced bundled libs with compatible versions for wider client compatibility.
+- Moved lib registration into `ADDON_LOADED` for reliability.
+- Changed minimap icon to book texture (`INV_Misc_Book_11`).
 
+---
 
+## v1.72 - 2026-03-26
 
-## 1.71 - 2026-03-26
+### Fixed
+
+- Fixed nil value crash (`attempt to index local 'c'`) when opening the raid selector dropdown with an unmapped tier value — now falls back to T1 color safely.
+- Fixed dropdown menus (tier, raid, group, page, spec, sort) orphaning on screen when the addon is closed via ESC key — all menus now close via an `OnHide` hook on the main frame.
+
+---
+
+## v1.71 - 2026-03-26
 
 ### Added
 
