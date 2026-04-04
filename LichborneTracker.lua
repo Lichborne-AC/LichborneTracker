@@ -2841,6 +2841,10 @@ local function BuildRaidFrame(parent, fl)
     end)
     inviteBtn:SetScript("OnLeave",function() GameTooltip:Hide() end)
 
+    -- Create the raid invite timer frame once and reuse it on every click to
+    -- prevent frame accumulation (memory leak) from repeated invite cycles.
+    local inviteTimerFrame = CreateFrame("Frame")
+
     inviteBtn:SetScript("OnClick",function()
         -- If already inviting, act as Stop
         if activeInviteFrame then
@@ -2878,10 +2882,10 @@ local function BuildRaidFrame(parent, fl)
         local phase = "logout_wait"
         local reinviteSubPhase = "remove"
 
-        local inviteFrame = CreateFrame("Frame")
-        activeInviteFrame = inviteFrame
+        -- Reuse the persistent frame; do not create a new one each cycle.
+        activeInviteFrame = inviteTimerFrame
         UpdateInviteButtons()
-        inviteFrame:SetScript("OnUpdate",function(_, elapsed)
+        inviteTimerFrame:SetScript("OnUpdate",function(_, elapsed)
             waitTime = waitTime + elapsed
 
             if phase == "logout_wait" then
@@ -2951,7 +2955,7 @@ local function BuildRaidFrame(parent, fl)
                 if #missing == 0 then
                     DEFAULT_CHAT_FRAME:AddMessage("|cffC69B3ALichborne:|r |cff44ff44All "..#names.." players confirmed in raid!|r",1,0.85,0)
                     if LichborneAddStatus then LichborneAddStatus:SetText("|cff44ff44All "..#names.." players confirmed in raid.|r") end
-                    inviteFrame:SetScript("OnUpdate",nil)
+                    inviteTimerFrame:SetScript("OnUpdate",nil)
                     activeInviteFrame = nil
                     SetInviteActive(false)
                     UpdateInviteButtons()
@@ -2969,7 +2973,7 @@ local function BuildRaidFrame(parent, fl)
                     if inviteIndex > #names then
                         DEFAULT_CHAT_FRAME:AddMessage("|cffC69B3ALichborne:|r |cff44ff44Re-invite pass complete.|r",1,0.85,0)
                         if LichborneAddStatus then LichborneAddStatus:SetText("|cff44ff44Invite complete (re-invite pass done).|r") end
-                        inviteFrame:SetScript("OnUpdate",nil)
+                        inviteTimerFrame:SetScript("OnUpdate",nil)
                         activeInviteFrame = nil
                         SetInviteActive(false)
                         UpdateInviteButtons()
@@ -3025,6 +3029,11 @@ local function BuildRaidFrame(parent, fl)
         GameTooltip:Show()
     end)
     inviteGroupBtn:SetScript("OnLeave",function() GameTooltip:Hide() end)
+
+    -- Create the group invite timer frame once and reuse it on every click to
+    -- prevent frame accumulation (memory leak) from repeated invite cycles.
+    local grpTimerFrame = CreateFrame("Frame")
+
     inviteGroupBtn:SetScript("OnClick",function()
         -- If already inviting, act as Stop
         if activeInviteFrame then
@@ -3055,10 +3064,10 @@ local function BuildRaidFrame(parent, fl)
         local waited = 0
         local grpPhase = "logout_wait"
         local grpReinviteSubPhase = "remove"
-        local grpFrame = CreateFrame("Frame")
-        activeInviteFrame = grpFrame
+        -- Reuse the persistent frame; do not create a new one each cycle.
+        activeInviteFrame = grpTimerFrame
         UpdateInviteButtons()
-        grpFrame:SetScript("OnUpdate",function(_, elapsed)
+        grpTimerFrame:SetScript("OnUpdate",function(_, elapsed)
             waited = waited + elapsed
             if grpPhase == "logout_wait" then
                 if waited < 1.5 then return end
@@ -3106,7 +3115,7 @@ local function BuildRaidFrame(parent, fl)
                 if #missing == 0 then
                     DEFAULT_CHAT_FRAME:AddMessage("|cffC69B3ALichborne:|r |cff44ff44All "..#names.." players confirmed in group!|r",1,0.85,0)
                     if LichborneAddStatus then LichborneAddStatus:SetText("|cff44ff44All "..#names.." players confirmed in group.|r") end
-                    grpFrame:SetScript("OnUpdate",nil)
+                    grpTimerFrame:SetScript("OnUpdate",nil)
                     activeInviteFrame = nil
                     SetInviteActive(false)
                     UpdateInviteButtons()
@@ -3122,7 +3131,7 @@ local function BuildRaidFrame(parent, fl)
                     if invIdx > #names then
                         DEFAULT_CHAT_FRAME:AddMessage("|cffC69B3ALichborne:|r |cff44ff44Re-invite pass complete.|r",1,0.85,0)
                         if LichborneAddStatus then LichborneAddStatus:SetText("|cff44ff44Invite complete (re-invite pass done).|r") end
-                        grpFrame:SetScript("OnUpdate",nil)
+                        grpTimerFrame:SetScript("OnUpdate",nil)
                         activeInviteFrame = nil
                         SetInviteActive(false)
                         UpdateInviteButtons()
