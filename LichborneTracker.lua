@@ -4954,9 +4954,11 @@ local function OnFirstShow()
             LichborneAddStatus:SetText("|cffff4444Not in a group.|r"); return
         end
         SetScanActive(true)
+        LichborneGroupScanActive = true
         LichborneAddStatus:SetText("Adding group members first...")
         AddGroupMembers(function(added, skipped)
             -- Now build unit list and run GS scan
+            if not LichborneGroupScanActive then SetScanActive(false); return end
             local units = {}
             units[#units+1] = "player"
             if GetNumRaidMembers() > 0 then
@@ -5020,9 +5022,11 @@ local function OnFirstShow()
             LichborneAddStatus:SetText("|cffff4444Not in a group.|r"); return
         end
         SetScanActive(true)
+        LichborneGroupScanActive = true
         LichborneAddStatus:SetText("Adding group members first...")
         AddGroupMembers(function(added, skipped)
             -- Now build unit list and run Spec scan
+            if not LichborneGroupScanActive then SetScanActive(false); return end
             local units = {}
             units[#units+1] = "player"
             if GetNumRaidMembers() > 0 then
@@ -5038,7 +5042,6 @@ local function OnFirstShow()
             local idx,elapsed,inspecting = 1,0,false
             local sFrame = CreateFrame("Frame")
             activeInspectFrame = sFrame
-            LichborneGroupScanActive = true
             sFrame:SetScript("OnUpdate", function(_, delta)
                 elapsed = elapsed + delta
                 if inspecting then
@@ -5658,7 +5661,7 @@ local function OnFirstShow()
     infoText:SetWidth(160)
     infoText:SetJustifyH("CENTER"); infoText:SetJustifyV("MIDDLE")
     infoText:SetText(
-        "|cffd4af37LICHBORNE  —  v2.0|r\n" ..
+        "|cffd4af37LICHBORNE  —  v2.1|r\n" ..
         "|cffaaaaaaGear Tracker & Raid Planner|r\n" ..
         "|cffaaaaaaWotLK 3.3.5a  ·  AzerothCore + PlayerBots|r\n" ..
         "\n" ..
@@ -6653,7 +6656,7 @@ local function BuildFrameBG()
     title:SetPoint("TOPLEFT", f, "TOPLEFT", 10, -12)
     title:SetPoint("TOPRIGHT", f, "TOPRIGHT", -280, -12)
     title:SetJustifyH("LEFT")
-    title:SetText("|cffC69B3ALICHBORNE|r  —  Gear Tracker  |cffaaaaaa v2.0|r")
+    title:SetText("|cffC69B3ALICHBORNE|r  —  Gear Tracker  |cffaaaaaa v2.1|r")
     local closeBtn = CreateFrame("Button", "LichborneCloseBtn", f, "UIPanelCloseButton")
     closeBtn:SetPoint("TOPRIGHT", f, "TOPRIGHT", 2, 2)
     closeBtn:SetScript("OnClick", function() f:Hide() end)
@@ -6985,12 +6988,14 @@ local function CalcSpec()
 
     -- WotLK 3.3.5a: pass inspect=true to read target's talents
     local inspectSelf = (LichborneInspectUnit and UnitIsUnit(LichborneInspectUnit, "player"))
+    local inspFlag = inspectSelf and false or true
+    local activeGroup = (GetActiveTalentGroup and GetActiveTalentGroup(inspFlag)) or 1
     local treePts = {0, 0, 0}
     for tab = 1, 3 do
-        local numTalents = GetNumTalents(tab, inspectSelf and false or true)
+        local numTalents = GetNumTalents(tab, inspFlag)
         if numTalents and numTalents > 0 then
             for t = 1, numTalents do
-                local name, _, _, _, currRank = GetTalentInfo(tab, t, inspectSelf and false or true)
+                local name, _, _, _, currRank = GetTalentInfo(tab, t, inspFlag, false, activeGroup)
                 if currRank and currRank > 0 then
                     treePts[tab] = treePts[tab] + currRank
                 end
@@ -7002,7 +7007,7 @@ local function CalcSpec()
     local tabPts = {0, 0, 0}
     local gotTabData = false
     for tab = 1, 3 do
-        local tabName, _, pts = GetTalentTabInfo(tab, inspectSelf and false or true)
+        local tabName, _, pts = GetTalentTabInfo(tab, inspFlag, false, activeGroup)
         if pts == nil then DBG("|cffff4444[NIL]|r GetTalentTabInfo(tab="..tab..") pts=nil (tabName=|cffffff88"..(tabName or "nil").."|r)") end
         if pts and pts > 0 then
             tabPts[tab] = pts

@@ -2,7 +2,7 @@
 
 **A World of Warcraft WotLK 3.3.5a Addon for AzerothCore Private Servers that tracks gear score, iLvL, gear slots, specs, and raid composition for your entire playerbot roster.**
 
-**Version 2.0**
+**Version 2.1**
 
 \---
 
@@ -11,6 +11,15 @@
 ![Class Tracker](Screenshots/ClassTab.png)
 ![Raid Planner](Screenshots/RaidTab.png)
 ![Character Sheet](Screenshots/CharacterSheet.png)
+
+\---
+
+## Recent Changes (v2.1)
+
+* **Dual-spec bots now report correct active spec** — Fixed a bug where bots with their secondary spec active always returned their primary spec. `CalcSpec` now calls `GetActiveTalentGroup` to determine which talent group is active and passes it to `GetTalentTabInfo` and `GetTalentInfo`, so the correct spec is read regardless of which group is active.
+* **Stop Scan now cancels Add Group Gear and Add Group Spec immediately** — Fixed a bug where pressing Stop during the member-adding phase of Add Group Gear or Add Group Spec had no effect. The scan would continue through all phases regardless. Root cause: `AddGroupMembers` wrote to a different variable than the one Stop Scan was reading due to a Lua scope mismatch. Both buttons now set the cancellation flag before the scan begins and check it when the add phase completes.
+
+(See CHANGELOG.md for full version history)
 
 \---
 
