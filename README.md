@@ -14,6 +14,10 @@
 
 \---
 
+## Recent Changes (v2.2)
+* **Fixed Titans grip bug (Duel 2h weapons not displaying correctly)
+
+
 ## Recent Changes (v2.1)
 
 * **Dual-spec bots now report correct active spec** — Fixed a bug where bots with their secondary spec active always returned their primary spec. `CalcSpec` now calls `GetActiveTalentGroup` to determine which talent group is active and passes it to `GetTalentTabInfo` and `GetTalentInfo`, so the correct spec is read regardless of which group is active.
