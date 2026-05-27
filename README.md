@@ -1,3 +1,17 @@
+# ⚠️ This project has moved
+
+**LichborneTracker has been superseded by [PlayerBotManager](https://github.com/Lichborne-AC/PlayerBotManager).**
+
+PlayerBotManager includes everything LichborneTracker did — gear score, iLvL, specs, raid composition, need boxes — plus Playerbots management, Individual Progression tracking, LevelSync, server controls, and more, all in a single unified addon.
+
+👉 **[Go to PlayerBotManager →](https://github.com/Lichborne-AC/PlayerBotManager)**
+
+---
+
+*This repository is archived and no longer maintained. The content below is preserved for reference only.*
+
+---
+
 # LICHBORNE — Gear Tracker
 
 **A World of Warcraft WotLK 3.3.5a Addon for AzerothCore Private Servers that tracks gear score, iLvL, gear slots, specs, and raid composition for your entire playerbot roster.**
@@ -289,4 +303,3 @@ Special thanks to: **Dohtt**, **Scarecr0w12** — TheCGN.net, **Dreathean**, **R
 ## Compatibility
 
 WoW 3.3.5a (build 12340) | AzerothCore | Playerbot Module
-
